@@ -174,20 +174,6 @@ class TqContext extends RawTqContext
     }
 
     /**
-     * IMPORTANT! The "BeforeSuite" hook should not be tagged, because suite has no tags!
-     *
-     * @BeforeSuite
-     */
-    public static function beforeSuite()
-    {
-        self::setDrupalVariables([
-            // Set to "false", because the administration menu will not be rendered.
-            // @see https://www.drupal.org/node/2023625#comment-8607207
-            'admin_menu_cache_client' => false,
-        ]);
-    }
-
-    /**
      * @param Scope\BeforeFeatureScope $scope
      *   Scope of the processing feature.
      *

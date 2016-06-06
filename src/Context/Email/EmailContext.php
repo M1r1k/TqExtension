@@ -199,12 +199,12 @@ class EmailContext extends RawEmailContext
         ]);
 
         // Store original mail system to restore it after scenario.
-        $this->originalMailSystem = variable_get('mail_system', $this->originalMailSystem);
-        $this->setDrupalVariables([
+        $this->originalMailSystem = \Drupal::config('system.mail')->get('interface');
+        $this->setDrupalVariables(
             // Set the mail system for testing. It will store an emails in
             // "drupal_test_email_collector" Drupal variable instead of sending.
-            'mail_system' => ['default-system' => 'TestingMailSystem'],
-        ]);
+            'system.mail', ['interface' => ['default' => 'test_mail_collector']]
+        );
     }
 
     /**
@@ -212,13 +212,13 @@ class EmailContext extends RawEmailContext
      */
     public function afterScenarioEmailApi()
     {
-        $this->setDrupalVariables([
-            // Bring back the original mail system.
-            'mail_system' => $this->originalMailSystem,
-            // Flush the email buffer, allowing us to reuse this step
-            // definition to clear existing mail.
-            'drupal_test_email_collector' => [],
-        ]);
+        $this->setDrupalVariables(
+        // Bring back the original mail system.
+          'system.mail', ['interface' => ['default' => $this->originalMailSystem]]
+        );
+        // Flush the email buffer, allowing us to reuse this step
+        // definition to clear existing mail.
+        \Drupal::state()->set('drupal_test_email_collector', []);
     }
 
     /**

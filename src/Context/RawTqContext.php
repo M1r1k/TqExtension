@@ -89,11 +89,13 @@ class RawTqContext extends RawPageContext implements TqContextInterface
      * @param array $variables
      *   An associative array where key is a variable name and a value - value.
      */
-    public static function setDrupalVariables(array $variables)
+    public static function setDrupalVariables($config_name, array $variables)
     {
+        $config = \Drupal::service('config.factory')->getEditable($config_name);
         foreach ($variables as $name => $value) {
-            variable_set($name, $value);
+            $config->set($name, $value);
         }
+        $config->save();
     }
 
     /**
@@ -224,7 +226,7 @@ class RawTqContext extends RawPageContext implements TqContextInterface
      */
     public function executeJs($javascript, array $args = [])
     {
-        $javascript = format_string($javascript, $args);
+        $javascript = sprintf($javascript, $args);
 
         $this->processJavaScript($javascript);
         self::debug([$javascript]);
